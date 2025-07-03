@@ -12,9 +12,13 @@ import com.example.royaumedekaamelott.Enumeration.StatutParticipation;
 import com.example.royaumedekaamelott.Repositories.ChevalierRepository;
 import com.example.royaumedekaamelott.Repositories.ParticipantQueteRepository;
 import com.example.royaumedekaamelott.Repositories.QueteRepository;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -112,4 +116,15 @@ public class QueteService {
                 Difficulte.ABERRANTE,
                 StatutParticipation.EN_COURS);
     }
+
+
+    @DeleteMapping("/chevaliers/{idChevalier}/retirer-quete/{idQuete}")
+    public ResponseEntity<Void> retirerChevalierDeLaQuete(
+            @PathVariable Integer idChevalier,
+            @PathVariable Integer idQuete
+    ) {
+        participantQueteRepository.deleteByChevalier_IdAndQuete_Id(idChevalier, idQuete);
+        return ResponseEntity.noContent().build();
+    }
+
 }

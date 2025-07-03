@@ -1,10 +1,9 @@
 package com.example.royaumedekaamelott.Controller;
 
 import com.example.royaumedekaamelott.Dto.ChevalierDto;
-import com.example.royaumedekaamelott.Dto.ParticipantQueteDto;
 import com.example.royaumedekaamelott.Entities.ChevalierEntity;
-import com.example.royaumedekaamelott.Entities.ParticipationQueteEntity;
 import com.example.royaumedekaamelott.Services.ChevalierService;
+import com.example.royaumedekaamelott.Services.QueteService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +19,9 @@ public class ChevalierController {
     @Autowired
     private ChevalierService chevalierService;
 
+    @Autowired
+    private QueteService queteService;
+
     @Operation(summary = "create chevalier", description = "create chevalier", operationId = "create chevalier")
     @PostMapping("create/chevalier")
     public ResponseEntity<ChevalierDto> createChevalier(@RequestBody ChevalierDto chevalierDto) {
@@ -31,5 +33,16 @@ public class ChevalierController {
     @GetMapping("getAll/")
     public List<ChevalierEntity> getAllChevalier() {
         return chevalierService.getAllChevaliers();
+    }
+
+
+    @DeleteMapping("/chevaliers/{idChevalier}/retirer-quete/{idQuete}")
+    @Operation(summary = "Retirer un chevalier d'une quête")
+    public ResponseEntity<String> retirerChevalierDeLaQuete(
+        @PathVariable Integer idChevalier,
+        @PathVariable Integer idQuete) {
+
+        queteService.retirerChevalierDeLaQuete(idChevalier, idQuete);
+        return ResponseEntity.ok("Chevalier retiré de la quête avec succès");
     }
 }
