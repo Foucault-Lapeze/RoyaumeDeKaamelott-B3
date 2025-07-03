@@ -51,4 +51,16 @@ public class QueteController {
 
         return ResponseEntity.ok(quetes);
     }
+
+    @GetMapping("/quetes/effectif-manquant")
+    public ResponseEntity<List<QueteEntity>> getQuetesAvecEffectifManquant(@RequestParam long minChevaliers) {
+        List<QueteEntity> quetes = queteService.getQuetesAvecEffectifManquant(minChevaliers);
+
+        if (quetes.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(quetes);
+    }
+
 }

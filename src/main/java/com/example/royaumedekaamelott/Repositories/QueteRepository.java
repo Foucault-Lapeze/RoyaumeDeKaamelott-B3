@@ -17,4 +17,11 @@ public interface QueteRepository extends JpaRepository<QueteEntity, Integer> {
     List<QueteEntity> findAberranteNonCommenceeOuEnCours(
             @Param("difficulte") Difficulte difficulte,
             @Param("statutEnCours") StatutParticipation statutEnCours);
+
+    @Query("SELECT q FROM QueteEntity q " +
+            "LEFT JOIN ParticipationQueteEntity p ON p.quete = q " +
+            "GROUP BY q.id " +
+            "HAVING COUNT(p.chevalier) < :minChevaliers")
+    List<QueteEntity> findQuetesAvecMoinsDeChevaliers(@Param("minChevaliers") long minChevaliers);
+
 }

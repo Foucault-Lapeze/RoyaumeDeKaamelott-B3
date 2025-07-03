@@ -127,4 +127,9 @@ public class QueteService {
         return ResponseEntity.noContent().build();
     }
 
+    public List<QueteEntity> getQuetesAvecEffectifManquant(long minChevaliers) {
+        return queteRepository.findQuetesAvecMoinsDeChevaliers(minChevaliers);
+    }
+
+
 }
