@@ -5,6 +5,8 @@ import com.example.royaumedekaamelott.Dto.ParticipantQueteDto;
 import com.example.royaumedekaamelott.Entities.ChevalierEntity;
 import com.example.royaumedekaamelott.Entities.ParticipationQueteEntity;
 import com.example.royaumedekaamelott.Entities.QueteEntity;
+import com.example.royaumedekaamelott.Enumeration.Role;
+import com.example.royaumedekaamelott.Enumeration.StatutParticipation;
 import com.example.royaumedekaamelott.Repositories.ChevalierRepository;
 import com.example.royaumedekaamelott.Repositories.ParticipantQueteRepository;
 import com.example.royaumedekaamelott.Repositories.QueteRepository;
@@ -40,28 +42,43 @@ public class QueteService {
             dto.setTitre(participation.getChevalier().getTitre());
             dto.setCaracteristiquePrincipale(participation.getChevalier().getCaracteristiquePrincipale());
             dto.setNiveauBravoure(participation.getChevalier().getNiveauBravoure());
-            dto.setRole(participation.getRole());
-            dto.setStatutParticipation(participation.getStatutParticipation());
+            dto.setRole(participation.getRole().toString());
+            dto.setStatutParticipation(participation.getStatutParticipation().toString());
             dto.setCommentaire(participation.getCommentaireRoi());
             return dto;
         }).collect(Collectors.toList());
     }
 
     public void assignerChevalier(Integer idQuete, AssignationChevalierDto dto) {
-        ParticipationQueteEntity participation = new ParticipationQueteEntity();
-
         ChevalierEntity chevalier = chevalierRepository.findById(dto.getIdChevalier())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Chevalier introuvable"));
 
         QueteEntity quete = queteRepository.findById(idQuete)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Quête introuvable"));
 
+        Role role;
+        StatutParticipation statut;
+
+        try {
+            role = Role.valueOf(dto.getRole().toUpperCase());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Rôle invalide : " + dto.getRole());
+        }
+
+        try {
+            statut = StatutParticipation.valueOf(dto.getStatutParticipation().toUpperCase());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Statut de participation invalide : " + dto.getStatutParticipation());
+        }
+
+        ParticipationQueteEntity participation = new ParticipationQueteEntity();
         participation.setChevalier(chevalier);
         participation.setQuete(quete);
-        participation.setRole(dto.getRole());
-        participation.setStatutParticipation(dto.getStatutParticipation());
+        participation.setRole(role);
+        participation.setStatutParticipation(statut);
         participation.setCommentaireRoi(dto.getCommentaireRoi());
 
         participantQueteRepository.save(participation);
     }
+
 }

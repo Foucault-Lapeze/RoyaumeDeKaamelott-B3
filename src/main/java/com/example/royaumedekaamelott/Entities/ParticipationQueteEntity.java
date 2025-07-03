@@ -1,6 +1,8 @@
 package com.example.royaumedekaamelott.Entities;
 import com.example.royaumedekaamelott.Entities.ChevalierEntity;
 import com.example.royaumedekaamelott.Entities.QueteEntity;
+import com.example.royaumedekaamelott.Enumeration.Role;
+import com.example.royaumedekaamelott.Enumeration.StatutParticipation;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,11 +25,13 @@ public class ParticipationQueteEntity {
     @JoinColumn(name = "id_quete")
     private QueteEntity quete;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "role")
-    private String role;
+    private Role role;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "statut_participation")
-    private String statutParticipation;
+    private StatutParticipation statutParticipation;
 
     @Column(name = "commentaire_roi")
     private String commentaireRoi;

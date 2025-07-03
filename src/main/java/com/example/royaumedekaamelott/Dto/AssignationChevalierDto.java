@@ -11,9 +11,9 @@ public class AssignationChevalierDto {
 
     private Integer idChevalier;
 
-    private Role role;
+    private String role;
 
-    private StatutParticipation statutParticipation;
+    private String statutParticipation;
 
     private String commentaireRoi;
 }
