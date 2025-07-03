@@ -2,6 +2,7 @@ package com.example.royaumedekaamelott.Services;
 
 import com.example.royaumedekaamelott.Dto.AssignationChevalierDto;
 import com.example.royaumedekaamelott.Dto.ParticipantQueteDto;
+import com.example.royaumedekaamelott.Dto.QueteDto;
 import com.example.royaumedekaamelott.Entities.ChevalierEntity;
 import com.example.royaumedekaamelott.Entities.ParticipationQueteEntity;
 import com.example.royaumedekaamelott.Entities.QueteEntity;
@@ -79,6 +80,30 @@ public class QueteService {
         participation.setCommentaireRoi(dto.getCommentaireRoi());
 
         participantQueteRepository.save(participation);
+    }
+
+    public List<QueteDto> getQuetesEnCoursByChevalierId(Integer idChevalier) {
+        List<ParticipationQueteEntity> participations = participantQueteRepository
+                .findByChevalier_IdAndStatutParticipation(idChevalier, StatutParticipation.EN_COURS);
+
+        if (participations.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Aucune quête en cours trouvée pour ce chevalier");
+        }
+
+        // Convertir ParticipationQueteEntity -> QueteDto
+        return participations.stream()
+                .map(participation -> {
+                    QueteEntity quete = participation.getQuete();
+                    QueteDto dto = new QueteDto();
+                    dto.setId(quete.getId());
+                    dto.setNomQuete(quete.getNomQuete());
+                    dto.setDescription(quete.getDescription());
+                    dto.setDifficulte(quete.getDifficulte().toString());
+                    dto.setDate_assignation(quete.getDateAssignation());
+                    dto.setDate_echeance(quete.getDateEcheance());
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 
 }
