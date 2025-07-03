@@ -63,4 +63,10 @@ public class QueteController {
         return ResponseEntity.ok(quetes);
     }
 
+    @GetMapping("/quetes/les-plus-longues")
+    public ResponseEntity<List<QueteEntity>> getQuetesLesPlusLongues(@RequestParam(defaultValue = "5") int limit) {
+        List<QueteEntity> quetes = queteService.getQuetesLesPlusLongues(limit);
+        return ResponseEntity.ok(quetes);
+    }
+
 }

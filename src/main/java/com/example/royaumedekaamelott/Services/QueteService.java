@@ -14,6 +14,7 @@ import com.example.royaumedekaamelott.Repositories.ParticipantQueteRepository;
 import com.example.royaumedekaamelott.Repositories.QueteRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -129,6 +130,10 @@ public class QueteService {
 
     public List<QueteEntity> getQuetesAvecEffectifManquant(long minChevaliers) {
         return queteRepository.findQuetesAvecMoinsDeChevaliers(minChevaliers);
+    }
+
+    public List<QueteEntity> getQuetesLesPlusLongues(int limit) {
+        return queteRepository.findAllOrderByDureeDesc(PageRequest.of(0, limit));
     }
 
 

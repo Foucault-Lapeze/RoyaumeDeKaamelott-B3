@@ -3,10 +3,12 @@ package com.example.royaumedekaamelott.Repositories;
 import com.example.royaumedekaamelott.Entities.QueteEntity;
 import com.example.royaumedekaamelott.Enumeration.Difficulte;
 import com.example.royaumedekaamelott.Enumeration.StatutParticipation;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 public interface QueteRepository extends JpaRepository<QueteEntity, Integer> {
@@ -23,5 +25,9 @@ public interface QueteRepository extends JpaRepository<QueteEntity, Integer> {
             "GROUP BY q.id " +
             "HAVING COUNT(p.chevalier) < :minChevaliers")
     List<QueteEntity> findQuetesAvecMoinsDeChevaliers(@Param("minChevaliers") long minChevaliers);
+
+    @Query("SELECT q FROM QueteEntity q " +
+            "ORDER BY DATEDIFF(q.dateEcheance, q.dateAssignation) DESC")
+    List<QueteEntity> findAllOrderByDureeDesc(PageRequest pageRequest);
 
 }
