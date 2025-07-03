@@ -6,6 +6,7 @@ import com.example.royaumedekaamelott.Dto.QueteDto;
 import com.example.royaumedekaamelott.Entities.ChevalierEntity;
 import com.example.royaumedekaamelott.Entities.ParticipationQueteEntity;
 import com.example.royaumedekaamelott.Entities.QueteEntity;
+import com.example.royaumedekaamelott.Enumeration.Difficulte;
 import com.example.royaumedekaamelott.Enumeration.Role;
 import com.example.royaumedekaamelott.Enumeration.StatutParticipation;
 import com.example.royaumedekaamelott.Repositories.ChevalierRepository;
@@ -106,4 +107,9 @@ public class QueteService {
                 .collect(Collectors.toList());
     }
 
+    public List<QueteEntity> getQuetesAberranteNonCommenceeOuEnCours() {
+        return queteRepository.findAberranteNonCommenceeOuEnCours(
+                Difficulte.ABERRANTE,
+                StatutParticipation.EN_COURS);
+    }
 }

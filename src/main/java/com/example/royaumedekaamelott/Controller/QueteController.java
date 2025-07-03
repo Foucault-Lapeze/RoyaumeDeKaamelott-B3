@@ -3,6 +3,7 @@ package com.example.royaumedekaamelott.Controller;
 import com.example.royaumedekaamelott.Dto.AssignationChevalierDto;
 import com.example.royaumedekaamelott.Dto.ParticipantQueteDto;
 import com.example.royaumedekaamelott.Dto.QueteDto;
+import com.example.royaumedekaamelott.Entities.QueteEntity;
 import com.example.royaumedekaamelott.Services.QueteService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,14 @@ public class QueteController {
     @Operation(summary = "Liste des quêtes en cours pour un chevalier")
     public ResponseEntity<List<QueteDto>> getQuetesEnCoursByChevalierId(@PathVariable Integer idChevalier) {
         List<QueteDto> quetes = queteService.getQuetesEnCoursByChevalierId(idChevalier);
+        return ResponseEntity.ok(quetes);
+    }
+
+    @GetMapping("/chevaliers/{idChevalier}/difficulte-aberrante")
+    @Operation(summary = "Liste des quêtes ou la difficultés est Aberrante")
+    public ResponseEntity<List<QueteEntity>> getQuetesDifficulteAberrante() {
+        List<QueteEntity> quetes = queteService.getQuetesAberranteNonCommenceeOuEnCours();
+
         return ResponseEntity.ok(quetes);
     }
 }
