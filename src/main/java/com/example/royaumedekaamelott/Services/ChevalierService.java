@@ -48,4 +48,8 @@ public class ChevalierService {
     public List<ChevalierEntity> getAllChevaliers() {
         return chevalierRepository.findAll();
     }
+
+    public List<ChevalierEntity> findByCaracteristiquePrincipale(String caracteristique) {
+        return chevalierRepository.findByCaracteristiquePrincipale(caracteristique);
+    }
 }

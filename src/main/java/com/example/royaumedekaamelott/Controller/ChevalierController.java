@@ -45,4 +45,16 @@ public class ChevalierController {
         queteService.retirerChevalierDeLaQuete(idChevalier, idQuete);
         return ResponseEntity.ok("Chevalier retiré de la quête avec succès");
     }
+
+    @GetMapping("/chevaliers/caracteristique/{caracteristique}")
+    public ResponseEntity<List<ChevalierEntity>> getChevaliersByCaracteristique(@PathVariable String caracteristique) {
+        List<ChevalierEntity> chevaliers = chevalierService.findByCaracteristiquePrincipale(caracteristique);
+
+        if (chevaliers.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(chevaliers);
+    }
+
 }
