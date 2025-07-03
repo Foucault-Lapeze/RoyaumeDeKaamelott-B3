@@ -3,14 +3,17 @@ package com.example.royaumedekaamelott.Controller;
 import com.example.royaumedekaamelott.Dto.AssignationChevalierDto;
 import com.example.royaumedekaamelott.Dto.ParticipantQueteDto;
 import com.example.royaumedekaamelott.Dto.QueteDto;
+import com.example.royaumedekaamelott.Dto.QuetePeriodeDto;
 import com.example.royaumedekaamelott.Entities.QueteEntity;
 import com.example.royaumedekaamelott.Services.QueteService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -68,5 +71,15 @@ public class QueteController {
         List<QueteEntity> quetes = queteService.getQuetesLesPlusLongues(limit);
         return ResponseEntity.ok(quetes);
     }
+
+    @GetMapping("/quetes/periode")
+    public ResponseEntity<List<QuetePeriodeDto>> getQuetesParPeriode(
+            @RequestParam("date_debut") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateDebut,
+            @RequestParam("date_fin") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFin
+    ) {
+        List<QuetePeriodeDto> resultats = queteService.getQuetesParPeriode(dateDebut, dateFin);
+        return ResponseEntity.ok(resultats);
+    }
+
 
 }

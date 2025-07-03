@@ -3,6 +3,7 @@ package com.example.royaumedekaamelott.Services;
 import com.example.royaumedekaamelott.Dto.AssignationChevalierDto;
 import com.example.royaumedekaamelott.Dto.ParticipantQueteDto;
 import com.example.royaumedekaamelott.Dto.QueteDto;
+import com.example.royaumedekaamelott.Dto.QuetePeriodeDto;
 import com.example.royaumedekaamelott.Entities.ChevalierEntity;
 import com.example.royaumedekaamelott.Entities.ParticipationQueteEntity;
 import com.example.royaumedekaamelott.Entities.QueteEntity;
@@ -12,7 +13,7 @@ import com.example.royaumedekaamelott.Enumeration.StatutParticipation;
 import com.example.royaumedekaamelott.Repositories.ChevalierRepository;
 import com.example.royaumedekaamelott.Repositories.ParticipantQueteRepository;
 import com.example.royaumedekaamelott.Repositories.QueteRepository;
-import io.swagger.v3.oas.annotations.Operation;
+import java.time.temporal.ChronoUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -136,5 +138,35 @@ public class QueteService {
         return queteRepository.findAllOrderByDureeDesc(PageRequest.of(0, limit));
     }
 
+    public List<QuetePeriodeDto> getQuetesParPeriode(LocalDate dateDebut, LocalDate dateFin) {
+        List<QueteEntity> quetes = queteRepository.findQuetesParChevauchement(dateDebut, dateFin);
 
+        return quetes.stream().map(q -> {
+            QuetePeriodeDto dto = new QuetePeriodeDto();
+            dto.setNomQuete(q.getNomQuete());
+
+            // Nombre de chevaliers
+            int nbChevaliers = participantQueteRepository.findByQuete_Id(q.getId()).size();
+            dto.setNombreChevaliers(nbChevaliers);
+
+            // Durée
+            long jours = ChronoUnit.DAYS.between(q.getDateAssignation(), q.getDateEcheance());
+            dto.setDureeEnJours(jours);
+
+            // Difficulte
+            dto.setDifficulte(q.getDifficulte().toString());
+
+            // Statut global (selon dates)
+            LocalDate aujourdHui = LocalDate.now();
+            if (aujourdHui.isBefore(q.getDateAssignation())) {
+                dto.setStatutGlobal("À Venir");
+            } else if (!aujourdHui.isAfter(q.getDateEcheance())) {
+                dto.setStatutGlobal("En Cours");
+            } else {
+                dto.setStatutGlobal("Terminée");
+            }
+
+            return dto;
+        }).collect(Collectors.toList());
+    }
 }

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.awt.print.Pageable;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface QueteRepository extends JpaRepository<QueteEntity, Integer> {
@@ -26,8 +27,18 @@ public interface QueteRepository extends JpaRepository<QueteEntity, Integer> {
             "HAVING COUNT(p.chevalier) < :minChevaliers")
     List<QueteEntity> findQuetesAvecMoinsDeChevaliers(@Param("minChevaliers") long minChevaliers);
 
+    //exercice 10
     @Query("SELECT q FROM QueteEntity q " +
             "ORDER BY DATEDIFF(q.dateEcheance, q.dateAssignation) DESC")
     List<QueteEntity> findAllOrderByDureeDesc(PageRequest pageRequest);
+
+//exercice 11
+    @Query("SELECT q FROM QueteEntity q " +
+            "WHERE q.dateAssignation <= :dateFin " +
+            "AND q.dateEcheance >= :dateDebut")
+    List<QueteEntity> findQuetesParChevauchement(
+            @Param("dateDebut") LocalDate dateDebut,
+            @Param("dateFin") LocalDate dateFin
+    );
 
 }
