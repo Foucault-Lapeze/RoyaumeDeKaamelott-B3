@@ -17,5 +17,6 @@ public interface ParticipantQueteRepository extends JpaRepository<ParticipationQ
     @Modifying
     void deleteByChevalier_IdAndQuete_Id(Integer chevalierId, Integer queteId);
 
+    List<ParticipationQueteEntity> findByChevalier_Id(Integer chevalierId);
 }
 

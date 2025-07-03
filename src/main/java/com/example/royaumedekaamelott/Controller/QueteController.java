@@ -1,14 +1,10 @@
 package com.example.royaumedekaamelott.Controller;
 
-import com.example.royaumedekaamelott.Dto.AssignationChevalierDto;
-import com.example.royaumedekaamelott.Dto.ParticipantQueteDto;
-import com.example.royaumedekaamelott.Dto.QueteDto;
-import com.example.royaumedekaamelott.Dto.QuetePeriodeDto;
+import com.example.royaumedekaamelott.Dto.*;
 import com.example.royaumedekaamelott.Entities.QueteEntity;
 import com.example.royaumedekaamelott.Services.QueteService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -81,5 +77,11 @@ public class QueteController {
         return ResponseEntity.ok(resultats);
     }
 
+    @GetMapping("/chevaliers/rapport-performance/{idChevalier}")
+    @Operation(summary = "Rapport de performance du chevalier")
+    public ResponseEntity<RapportPerformanceDto> getRapportPerformance(@PathVariable Integer idChevalier) {
+        RapportPerformanceDto rapport = queteService.genererRapportPerformance(idChevalier);
+        return ResponseEntity.ok(rapport);
+    }
 
 }

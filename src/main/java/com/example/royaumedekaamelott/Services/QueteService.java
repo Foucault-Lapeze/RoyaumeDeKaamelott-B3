@@ -1,9 +1,6 @@
 package com.example.royaumedekaamelott.Services;
 
-import com.example.royaumedekaamelott.Dto.AssignationChevalierDto;
-import com.example.royaumedekaamelott.Dto.ParticipantQueteDto;
-import com.example.royaumedekaamelott.Dto.QueteDto;
-import com.example.royaumedekaamelott.Dto.QuetePeriodeDto;
+import com.example.royaumedekaamelott.Dto.*;
 import com.example.royaumedekaamelott.Entities.ChevalierEntity;
 import com.example.royaumedekaamelott.Entities.ParticipationQueteEntity;
 import com.example.royaumedekaamelott.Entities.QueteEntity;
@@ -24,7 +21,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -168,5 +167,45 @@ public class QueteService {
 
             return dto;
         }).collect(Collectors.toList());
+    }
+
+    public RapportPerformanceDto genererRapportPerformance(Integer idChevalier) {
+        List<ParticipationQueteEntity> participations = participantQueteRepository.findByChevalier_Id(idChevalier);
+
+        if (participations.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Aucune participation trouvée.");
+        }
+
+        int totalTerminees = 0;
+        int totalChefExpedition = 0;
+        int totalTermineeEtEnCours = 0;
+
+        Map<String, Integer> commentaireCount = new HashMap<>();
+
+        for (ParticipationQueteEntity p : participations) {
+            StatutParticipation statut = p.getStatutParticipation();
+            if (statut == StatutParticipation.TERMINEE) totalTerminees++;
+            if (statut == StatutParticipation.EN_COURS || statut == StatutParticipation.TERMINEE) totalTermineeEtEnCours++;
+
+            if (p.getRole().name().equals("CHEF_EXPEDITION")) totalChefExpedition++;
+
+            String commentaire = p.getCommentaireRoi();
+            if (commentaire != null && !commentaire.isBlank()) {
+                commentaireCount.put(commentaire, commentaireCount.getOrDefault(commentaire, 0) + 1);
+            }
+        }
+
+        String commentaireLePlusFrequent = commentaireCount.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse("Aucun commentaire");
+
+        RapportPerformanceDto rapport = new RapportPerformanceDto();
+        rapport.setTotalQuetesTerminees(totalTerminees);
+        rapport.setTotalQuetesChefExpedition(totalChefExpedition);
+        rapport.setTauxSucces(totalTermineeEtEnCours == 0 ? 0 : (double) totalTerminees / totalTermineeEtEnCours);
+        rapport.setCommentaireRoiFrequent(commentaireLePlusFrequent);
+
+        return rapport;
     }
 }
