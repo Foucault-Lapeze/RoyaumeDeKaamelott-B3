@@ -84,4 +84,13 @@ public class QueteController {
         return ResponseEntity.ok(rapport);
     }
 
+    @GetMapping("/stats/rapport-activite-mensuel")
+    @Operation(summary = "Rapport d'activité mensuel du royaume")
+    public ResponseEntity<RapportMensuelDto> getRapportMensuel(
+            @RequestParam int mois,
+            @RequestParam int annee) {
+        return ResponseEntity.ok(queteService.genererRapportMensuel(mois, annee));
+    }
+
+
 }

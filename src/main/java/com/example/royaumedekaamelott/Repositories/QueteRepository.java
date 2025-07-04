@@ -1,5 +1,6 @@
 package com.example.royaumedekaamelott.Repositories;
 
+import com.example.royaumedekaamelott.Entities.ParticipationQueteEntity;
 import com.example.royaumedekaamelott.Entities.QueteEntity;
 import com.example.royaumedekaamelott.Enumeration.Difficulte;
 import com.example.royaumedekaamelott.Enumeration.StatutParticipation;
@@ -40,5 +41,8 @@ public interface QueteRepository extends JpaRepository<QueteEntity, Integer> {
             @Param("dateDebut") LocalDate dateDebut,
             @Param("dateFin") LocalDate dateFin
     );
+
+    //exercice 13
+    int countByDateAssignationBetween(LocalDate debut, LocalDate fin);
 
 }

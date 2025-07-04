@@ -1,6 +1,5 @@
 package com.example.royaumedekaamelott.Entities;
-import com.example.royaumedekaamelott.Entities.ChevalierEntity;
-import com.example.royaumedekaamelott.Entities.QueteEntity;
+
 import com.example.royaumedekaamelott.Enumeration.Role;
 import com.example.royaumedekaamelott.Enumeration.StatutParticipation;
 import jakarta.persistence.*;

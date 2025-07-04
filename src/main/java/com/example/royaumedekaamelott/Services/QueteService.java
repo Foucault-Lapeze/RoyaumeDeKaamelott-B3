@@ -21,9 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -208,4 +206,54 @@ public class QueteService {
 
         return rapport;
     }
+
+    public RapportMensuelDto genererRapportMensuel(int mois, int annee) {
+        LocalDate debut = LocalDate.of(annee, mois, 1);
+        LocalDate fin = debut.withDayOfMonth(debut.lengthOfMonth());
+
+        // 1. Quêtes initiées
+        int nbQuetesInitiees = queteRepository.countByDateAssignationBetween(debut, fin);
+
+        // 2. Participations terminées
+        int nbQuetesTerminees = participantQueteRepository.countByStatutParticipationAndDateAssignationBetween(
+                StatutParticipation.TERMINEE, debut, fin
+        );
+
+        // 3. Chevaliers ayant participé
+        List<Integer> chevalierIds = participantQueteRepository.findDistinctChevalierIdsByDateAssignationBetween(debut, fin);
+        int nbChevaliersActifs = chevalierIds.size();
+
+        // 4. Quête la plus lamentablement échouée
+        List<ParticipationQueteEntity> echecs = participantQueteRepository
+                .findByStatutParticipationAndDateAssignationBetween(
+                        StatutParticipation.ECHOUEE_LAMENTABLEMENT, debut, fin
+                );
+
+        Map<QueteEntity, List<String>> echecsParQuete = new HashMap<>();
+        for (ParticipationQueteEntity e : echecs) {
+            echecsParQuete.computeIfAbsent(e.getQuete(), q -> new ArrayList<>())
+                    .add(e.getChevalier().getNom());
+        }
+
+        QueteEntity pireQuete = echecsParQuete.entrySet().stream()
+                .max(Comparator.comparingInt(e -> e.getValue().size()))
+                .map(Map.Entry::getKey)
+                .orElse(null);
+
+        RapportMensuelDto rapport = new RapportMensuelDto();
+        rapport.setNbQuetesInitiées(nbQuetesInitiees);
+        rapport.setNbQuetesTerminees(nbQuetesTerminees);
+        rapport.setNbChevaliersActifs(nbChevaliersActifs);
+
+        if (pireQuete != null) {
+            rapport.setQueteLaPlusEchouee(pireQuete.getNomQuete());
+            rapport.setChevaliersResponsables(echecsParQuete.get(pireQuete));
+        } else {
+            rapport.setQueteLaPlusEchouee("Aucune");
+            rapport.setChevaliersResponsables(Collections.emptyList());
+        }
+
+        return rapport;
+    }
+
 }
